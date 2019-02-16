@@ -1,0 +1,173 @@
+Describe quickrun-module-hook-rewrite_java_srcfile
+  Before all
+    let g:path_sep = exists('+shellslash') && !&shellslash ? '\' : '/'
+    let g:java_src = [
+          \ 'public class Hello {',
+          \ '    public static void main(String[] args) {',
+          \ '        System.out.print("Hello, world!");',
+          \ '    }',
+          \ '}',
+          \]
+  End
+
+  Before each
+    if !exists('*mkdir')
+      throw 'mkdir() is not available'
+    endif
+    let g:workdir = fnamemodify(tempname(), ':p:h') . g:path_sep . 'test'
+    try
+      if !isdirectory(g:workdir)
+        call mkdir(g:workdir, 'p')
+      endif
+    catch /.*/
+      throw 'failed mkdir()'
+    endtry
+    let g:dummy_file = g:workdir . g:path_sep . '____do_not_delete_me____.txt'
+    call writefile(['test data'], g:dummy_file)
+
+    new
+    put = g:java_src
+    1 delete _
+    let g:actual_output = ''
+    let g:expected_output = 'Hello, world!'
+  End
+
+  After each
+    close!
+    call delete(g:dummy_file)
+  End
+
+  It is available when vim-quickrun is available
+    Assert NotEmpty(filter(split(&runtimepath, ','),
+          \ 'fnamemodify(v:val, ":t") ==# "vim-quickrun"'))
+    Assert Equals(exists(':QuickRun'), 2)
+  End
+
+  It works if rewrite_java_srcfile/enable is enabled
+    QuickRun java
+          \ -rewrite_java_srcfile/enable 1
+          \ -outputter variable
+          \ -outputter/variable/name g:actual_output
+    Assert Equals(g:actual_output, g:expected_output)
+
+    QuickRun java
+          \ -rewrite_java_srcfile/enable 0
+          \ -outputter variable
+          \ -outputter/variable/name g:actual_output
+    Assert NotEquals(g:actual_output, g:expected_output)
+
+    QuickRun java
+          \ -outputter variable
+          \ -outputter/variable/name g:actual_output
+    Assert NotEquals(g:actual_output, g:expected_output)
+  End
+
+  It is not always necessary if quickrun with -tempfile option in an unnamed buffer
+    QuickRun java
+          \ -tempfile '%{fnamemodify(tempname(), ":p:h") . g:path_sep . "Hello.java"}'
+          \ -rewrite_java_srcfile/enable 1
+          \ -outputter variable
+          \ -outputter/variable/name g:actual_output
+    Assert Equals(g:actual_output, g:expected_output)
+
+    QuickRun java
+          \ -tempfile '%{fnamemodify(tempname(), ":p:h") . g:path_sep . "Hello.java"}'
+          \ -outputter variable
+          \ -outputter/variable/name g:actual_output
+    Assert Equals(g:actual_output, g:expected_output)
+  End
+
+  It deletes temporary files by default
+    QuickRun java
+          \ -rewrite_java_srcfile/enable 1
+          \ -rewrite_java_srcfile/tempdir '%{g:workdir}'
+          \ -outputter variable
+          \ -outputter/variable/name g:actual_output
+    Assert Equals(g:actual_output, g:expected_output)
+    Assert Equals(glob(g:workdir . g:path_sep . '*', !0, !0), [g:dummy_file])
+  End
+
+  It does not delete temporary files if rewrite_java_srcfile/sweep is disabled
+    QuickRun java
+          \ -rewrite_java_srcfile/enable 1
+          \ -rewrite_java_srcfile/sweep 0
+          \ -rewrite_java_srcfile/tempdir '%{g:workdir}'
+          \ -outputter variable
+          \ -outputter/variable/name g:actual_output
+    Assert Equals(g:actual_output, g:expected_output)
+    Assert NotEquals(glob(g:workdir . g:path_sep . '*', !0, !0), [g:dummy_file])
+  End
+
+  It works properly even if Java source has nested classes
+    % delete _
+    put = [
+          \ 'public class Hello {',
+          \ '    static class Main {',
+          \ '        static void print() {',
+          \ '            System.out.print(\"Hello, world!\");',
+          \ '        }',
+          \ '    }',
+          \ '    public static void main(String[] args) {',
+          \ '        Main.print();',
+          \ '    }',
+          \ '}',
+          \]
+    1 delete _
+
+    QuickRun java
+          \ -rewrite_java_srcfile/enable 1
+          \ -rewrite_java_srcfile/tempdir '%{g:workdir}'
+          \ -outputter variable
+          \ -outputter/variable/name g:actual_output
+    Assert Equals(g:actual_output, g:expected_output)
+  End
+
+  It deletes temporary files properly by default even if Java source has nested classes
+    % delete _
+    put = [
+          \ 'public class Hello {',
+          \ '    static class Main {',
+          \ '        static void print() {',
+          \ '            System.out.print(\"Hello, world!\");',
+          \ '        }',
+          \ '    }',
+          \ '    public static void main(String[] args) {',
+          \ '        Main.print();',
+          \ '    }',
+          \ '}',
+          \]
+    1 delete _
+
+    QuickRun java
+          \ -rewrite_java_srcfile/enable 1
+          \ -rewrite_java_srcfile/tempdir '%{g:workdir}'
+          \ -outputter variable
+          \ -outputter/variable/name g:actual_output
+    Assert Equals(g:actual_output, g:expected_output)
+    Assert Equals(glob(g:workdir . g:path_sep . '*', !0, !0), [g:dummy_file])
+  End
+
+  It is able to execute Java one liner with -src option
+    execute printf('QuickRun java
+          \ -rewrite_java_srcfile/enable 1
+          \ -outputter variable
+          \ -outputter/variable/name g:actual_output
+          \ -src "%s"
+          \ ', escape(join(g:java_src, ''), '"'))
+    Assert Equals(g:actual_output, g:expected_output)
+  End
+
+  It works according to settings in g:quickrun_config
+    let g:quickrun_config = {
+          \  'java' : extend(copy(g:quickrun#default_config.java), {
+          \    'rewrite_java_srcfile/enable' : 1,
+          \    'outputter' : 'variable',
+          \    'outputter/variable/name' : 'g:actual_output',
+          \  },
+          \)}
+    QuickRun java
+    Assert Equals(g:actual_output, g:expected_output)
+
+    unlet g:quickrun_config
+  End
+End

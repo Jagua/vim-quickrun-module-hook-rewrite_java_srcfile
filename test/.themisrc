@@ -1,0 +1,16 @@
+call themis#helper('command').with(themis#helper('assert'))
+
+
+if isdirectory('/tmp/vim-quickrun')
+  " for CI
+  call themis#option('runtimepath', '/tmp/vim-quickrun')
+else
+  " for local development
+  call themis#option('runtimepath', expand('~/.cache/plugged/vim-quickrun'))
+endif
+
+
+if !empty($PROFILE_LOG)
+  profile start $PROFILE_LOG
+  profile! file autoload/*.vim
+endif

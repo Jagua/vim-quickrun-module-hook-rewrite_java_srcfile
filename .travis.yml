@@ -1,0 +1,15 @@
+language: java
+
+os:
+  - linux
+  - osx
+
+sudo: false
+
+before_script:
+  - git clone --depth 1 https://github.com/thinca/vim-themis /tmp/vim-themis
+  - git clone --depth 1 https://github.com/thinca/vim-quickrun /tmp/vim-quickrun
+
+script:
+  - vim --version
+  - /tmp/vim-themis/bin/themis

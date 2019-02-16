@@ -1,0 +1,78 @@
+*quickrun-module-hook-rewrite_java_srcfile* quickrun: hook/rewrite_java_srcfile
+
+Version: 0.1.0
+Author: Jagua
+License: MIT License
+
+
+
+==============================================================================
+INTRODUCTION          *quickrun-module-hook-rewrite_java_srcfile-introduction*
+
+|quickrun-module-hook-rewrite_java_srcfile| is a |quickrun-hook| module in order
+to be able to |quickrun| Java source written in an unnamed buffer.
+
+
+Requirements:
+- Vim
+- |quickrun|
+  https://github.com/thinca/vim-quickrun
+
+Latest version:
+https://github.com/Jagua/vim-quickrun-module-hook-rewrite_java_srcfile
+
+
+
+==============================================================================
+HOOK/REWRITE_JAVA_SRCFILE          *quickrun-module-hook/rewrite_java_srcfile*
+
+
+"hook/rewrite_java_srcfile"
+
+        A hook to rewrite |quickrun-option-srcfile| of |quickrun-session.config|
+        properly in order to be able to quickrun Java source written in an
+        unnamed buffer.
+
+        This hook has the following options.
+
+        "hook/rewrite_java_srcfile/enable"      Number
+
+                Enable or disable this hook.
+                1       Enable
+                0       Disable
+                default: 0
+
+
+        "hook/rewrite_java_srcfile/pattern"     String
+
+                A pattern to match class name.
+                default: '\<class\>\s\+\zs\u\w*\ze'
+
+
+
+==============================================================================
+EXAMPLES                  *quickrun-module-hook-rewrite_java_srcfile-examples*
+
+
+    .vimrc
+
+>
+    let g:quickrun_config = {
+          \  'command' : 'java',
+          \  'exec' : ['javac %o -d %s:p:h %s', '%c -cp %s:p:h %s:t:r %a'],
+          \  'rewrite_java_srcfile/enable' : 1,
+          \)}
+<
+
+
+
+==============================================================================
+CHANGELOG                *quickrun-module-hook-rewrite_java_srcfile-changelog*
+
+0.1.0   2017-07-29
+        - Initial version.
+
+
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:et:norl:fen:fdl=0:

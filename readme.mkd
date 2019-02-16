@@ -1,0 +1,55 @@
+# vim-quickrun-module-hook-rewrite_java_srcfile
+
+
+**vim-quickrun-module-hook-rewrite_java_srcfile** is a Vim plugin to provide a module for vim-quickrun.
+
+
+This plugin depends on:
+
+* [vim-quickrun](https://github.com/thinca/vim-quickrun)
+
+Latest: https://github.com/Jagua/vim-quickrun-module-hook-rewrite_java_srcfile
+
+
+
+## Abstract
+
+QuickRun is able to execute Java source code like the following written in an unnamed buffer without this plugin.
+
+```java
+public class Hello {
+    public static void main(String[] args) {
+        System.out.print("Hello, world!");
+    }
+}
+```
+
+The commands are:
+
+```vim
+:QuickRun java -tempfile '%{fnamemodify(tempname(), ":p:h") . "/Hello.java"}'
+```
+or
+```vim
+:QuickRun java -tempfile '$TMPDIR/Hello.java'
+```
+
+This plugin is able to execute by the following command instead.
+
+```vim
+:QuickRun java -rewrite_java_srcfile/enable 1
+```
+
+
+
+## .vimrc
+
+```vim
+let g:quickrun_config = get(g:, 'quickrun_config', {})
+let g:quickrun_config['java'] = {
+      \  'command' : 'java',
+      \  'exec' : ['javac %o -d %s:p:h %s', '%c -cp %s:p:h %s:t:r %a'],
+      \  'output_encode/encoding' : has('win32unix') ? 'cp932:utf8' : '&tenc:&enc',
+      \  'rewrite_java_srcfile/enable' : 1,
+      \}
+```
