@@ -58,10 +58,12 @@ EXAMPLES                  *quickrun-module-hook-rewrite_java_srcfile-examples*
 
 >
     let g:quickrun_config = {
-          \  'command' : 'java',
-          \  'exec' : ['javac %o -d %s:p:h %s', '%c -cp %s:p:h %s:t:r %a'],
-          \  'rewrite_java_srcfile/enable' : 1,
-          \)}
+          \ 'java' : {
+          \   'command' : 'java',
+          \   'exec' : ['javac %o -d %s:p:h %s', '%c -cp %s:p:h %s:t:r %a'],
+          \   'rewrite_java_srcfile/enable' : 1,
+          \ },
+          \}
 <
 
 
