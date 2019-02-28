@@ -60,6 +60,12 @@ endfunction
 let s:hook.on_finish = function('s:on_finish')
 
 
+function! s:priority(hook_point) abort dict
+  return 100
+endfunction
+let s:hook.priority = function('s:priority')
+
+
 function! quickrun#hook#rewrite_java_srcfile#new() abort
   return deepcopy(s:hook)
 endfunction

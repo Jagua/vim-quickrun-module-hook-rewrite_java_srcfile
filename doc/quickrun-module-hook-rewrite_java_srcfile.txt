@@ -1,6 +1,6 @@
 *quickrun-module-hook-rewrite_java_srcfile* quickrun: hook/rewrite_java_srcfile
 
-Version: 0.1.0
+Version: 0.1.1
 Author: Jagua
 License: MIT License
 
@@ -70,6 +70,9 @@ EXAMPLES                  *quickrun-module-hook-rewrite_java_srcfile-examples*
 
 ==============================================================================
 CHANGELOG                *quickrun-module-hook-rewrite_java_srcfile-changelog*
+
+0.1.1   2019-02-28
+        - Add priority (always 100).
 
 0.1.0   2017-07-29
         - Initial version.
