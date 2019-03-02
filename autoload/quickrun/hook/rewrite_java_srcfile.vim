@@ -8,6 +8,8 @@ let s:hook = {
       \   'tempdir' : '%{fnamemodify(tempname(), ":p:h")}',
       \   'pattern' : '\<class\>\s\+\zs\u\w*\ze',
       \   'sweep' : 1,
+      \   'remove_package/enable' : 1,
+      \   'remove_package/pattern' : '\_.\{-}\_^\zspackage\s\+[^;]\+;\ze\_.*',
       \ },
       \}
 
@@ -15,17 +17,20 @@ let s:hook = {
 function! s:on_normalized(session, context) abort dict
   let path_sep = exists('+shellslash') && !&shellslash ? '\' : '/'
   let a:session._sweep_glob_expr_list = []
-  if has_key(a:session.config, 'srcfile') && !has_key(a:session.config, 'src')
-    let a:session.config.enable = 0
-    return
-  endif
   let tempdir = quickrun#expand(self.config.tempdir)
   if !isdirectory(tempdir)
     let a:session.config.enable = 0
     return
   endif
   let pat = self.config.pattern
-  let src = a:session.config.src
+  if has_key(a:session.config, 'src')
+    let src = a:session.config.src
+  elseif has_key(a:session.config, 'srcfile')
+    let src = join(readfile(a:session.config.srcfile), "\n")
+  endif
+  if self.config['remove_package/enable']
+    let src = substitute(src, self.config['remove_package/pattern'], '', '')
+  endif
   let class_name = matchstr(src, pat)
   if empty(class_name)
     let a:session.config.enable = 0

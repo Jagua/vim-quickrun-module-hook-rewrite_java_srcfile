@@ -1,6 +1,6 @@
 *quickrun-module-hook-rewrite_java_srcfile* quickrun: hook/rewrite_java_srcfile
 
-Version: 0.1.1
+Version: 0.1.2
 Author: Jagua
 License: MIT License
 
@@ -49,6 +49,20 @@ HOOK/REWRITE_JAVA_SRCFILE          *quickrun-module-hook/rewrite_java_srcfile*
                 default: '\<class\>\s\+\zs\u\w*\ze'
 
 
+        "hook/rewrite_java_srcfile/remove_package/enable"     Number
+
+                Enable or disable remove_package feature.
+                1       Enable
+                0       Disable
+                default: 1
+
+
+        "hook/rewrite_java_srcfile/remove_package/pattern"    String
+
+                A pattern to match a package statement.
+                default: '\_.\{-}\_^\zspackage\s\+[^;]\+;\ze\_.*'
+
+
 
 ==============================================================================
 EXAMPLES                  *quickrun-module-hook-rewrite_java_srcfile-examples*
@@ -70,6 +84,10 @@ EXAMPLES                  *quickrun-module-hook-rewrite_java_srcfile-examples*
 
 ==============================================================================
 CHANGELOG                *quickrun-module-hook-rewrite_java_srcfile-changelog*
+
+0.1.2   2019-03-02
+        - Add remove_package/enable and remove_package/pattern properties in
+          order to remove a package statement from src.
 
 0.1.1   2019-02-28
         - Add priority (always 100).

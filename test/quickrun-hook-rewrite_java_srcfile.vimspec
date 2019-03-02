@@ -62,6 +62,15 @@ Describe quickrun-module-hook-rewrite_java_srcfile
     Assert NotEquals(g:actual_output, g:expected_output)
   End
 
+  It works if a package statement exists
+    call append(0, 'package mypackage;')
+    QuickRun java
+          \ -rewrite_java_srcfile/enable 1
+          \ -outputter variable
+          \ -outputter/variable/name g:actual_output
+    Assert Equals(g:actual_output, g:expected_output)
+  End
+
   It is not always necessary if quickrun with -tempfile option in an unnamed buffer
     QuickRun java
           \ -tempfile '%{fnamemodify(tempname(), ":p:h") . g:path_sep . "Hello.java"}'
