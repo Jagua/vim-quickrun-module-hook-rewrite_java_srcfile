@@ -1,10 +1,21 @@
+---
 language: java
 
 os:
   - linux
   - osx
 
-sudo: false
+addons:
+  apt:
+    packages:
+      - python3-dev
+      - python3-pip
+
+before_install:
+  - sudo pip3 install --upgrade pip
+  - sudo pip3 install vim-vint
+  - go get github.com/haya14busa/go-vimlparser/cmd/vimlparser
+  - export PATH="${GOPATH}/bin:${PATH}"
 
 before_script:
   - git clone --depth 1 https://github.com/thinca/vim-themis /tmp/vim-themis
@@ -12,4 +23,9 @@ before_script:
 
 script:
   - vim --version
+  - /tmp/vim-themis/bin/themis --version
   - /tmp/vim-themis/bin/themis
+
+after_success:
+  - vint autoload
+  - vimlparser autoload/*/*/*.vim > /dev/null

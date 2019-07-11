@@ -1,5 +1,6 @@
 # vim-quickrun-module-hook-rewrite_java_srcfile
 
+[![Build Status](https://travis-ci.org/Jagua/vim-quickrun-module-hook-rewrite_java_srcfile.svg?branch=master)](https://travis-ci.org/Jagua/vim-quickrun-module-hook-rewrite_java_srcfile)
 
 **vim-quickrun-module-hook-rewrite_java_srcfile** is a Vim plugin to provide a module for vim-quickrun.
 
